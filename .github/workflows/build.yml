@@ -1,0 +1,48 @@
+name: build-launchme
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-13
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Show toolchain
+        run: |
+          uname -m
+          sw_vers
+          swift --version
+
+      - name: Build LaunchMe
+        run: |
+          swift package clean
+          swift build -c release --arch x86_64
+
+      - name: Assemble LaunchMe.app bundle
+        run: |
+          set -e
+          APP_DIR="$PWD/.build/release/LaunchMe.app"
+          mkdir -p "$APP_DIR/Contents/MacOS"
+          cp "$PWD/.build/release/LaunchMe" "$APP_DIR/Contents/MacOS/LaunchMe"
+          cp "$PWD/Resources/Info.plist" "$APP_DIR/Contents/Info.plist"
+          chmod +x "$APP_DIR/Contents/MacOS/LaunchMe"
+          codesign --force --deep --sign - "$APP_DIR" || true
+
+      - name: Archive app
+        run: |
+          ditto -ck --rsrc --sequesterRsrc .build/release/LaunchMe.app LaunchMe.app.zip
+
+      - name: Upload app artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: LaunchMe.app
+          path: LaunchMe.app.zip
+          if-no-files-found: error
