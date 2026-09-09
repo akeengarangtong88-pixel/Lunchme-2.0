@@ -9,3 +9,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Build
         run: swift build -c release
+name: Upload LaunchMe
+        uses: actions/upload-artifact@v4
+        with:
+          name: LaunchMe-2.0
+          path: .build/release/
+          if-no-files-found: error
