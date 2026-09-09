@@ -1,6 +1,6 @@
 name: Build LaunchMe
 
-on:
+'on':
   push:
       branches:
             - main
@@ -14,19 +14,17 @@ on:
                               - name: Checkout
                                       uses: actions/checkout@v4
 
-                                            - name: Build
-                                                    run: |
-                                                              swift --version
-                                                                        swift build -c release
+                                            - name: Build LaunchMe
+                                                    run: swift build -c release
 
-                                                                              - name: Create app bundle
-                                                                                      run: |
-                                                                                                mkdir -p build/LaunchMe.app/Contents/MacOS
-                                                                                                          cp .build/release/LaunchMe build/LaunchMe.app/Contents/MacOS/LaunchMe
-                                                                                                                    cp Resources/Info.plist build/LaunchMe.app/Contents/Info.plist
+                                                          - name: Create app bundle
+                                                                  run: |
+                                                                            mkdir -p build/LaunchMe.app/Contents/MacOS
+                                                                                      cp .build/release/LaunchMe build/LaunchMe.app/Contents/MacOS/LaunchMe
+                                                                                                cp Resources/Info.plist build/LaunchMe.app/Contents/Info.plist
 
-                                                                                                                          - name: Upload app
-                                                                                                                                  uses: actions/upload-artifact@v4
-                                                                                                                                          with:
-                                                                                                                                                    name: LaunchMe-macOS-Intel
-                                                                                                                                                              path: build/LaunchMe.app
+                                                                                                      - name: Upload LaunchMe
+                                                                                                              uses: actions/upload-artifact@v4
+                                                                                                                      with:
+                                                                                                                                name: LaunchMe-macOS-Intel
+                                                                                                                                          path: build/LaunchMe.app
