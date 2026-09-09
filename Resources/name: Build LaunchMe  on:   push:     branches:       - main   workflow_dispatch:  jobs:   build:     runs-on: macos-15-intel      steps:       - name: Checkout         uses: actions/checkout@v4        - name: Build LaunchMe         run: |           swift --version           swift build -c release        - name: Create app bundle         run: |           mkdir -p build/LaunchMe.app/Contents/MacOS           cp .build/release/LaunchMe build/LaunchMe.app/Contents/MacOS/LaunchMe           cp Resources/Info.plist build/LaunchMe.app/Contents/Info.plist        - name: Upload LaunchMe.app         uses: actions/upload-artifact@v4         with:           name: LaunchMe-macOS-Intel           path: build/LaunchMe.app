@@ -1,0 +1,32 @@
+name: Build LaunchMe
+
+on:
+  push:
+      branches:
+            - main
+              workflow_dispatch:
+
+              jobs:
+                build:
+                    runs-on: macos-15-intel
+
+                        steps:
+                              - name: Checkout
+                                      uses: actions/checkout@v4
+
+                                            - name: Build LaunchMe
+                                                    run: |
+                                                              swift --version
+                                                                        swift build -c release
+
+                                                                              - name: Create app bundle
+                                                                                      run: |
+                                                                                                mkdir -p build/LaunchMe.app/Contents/MacOS
+                                                                                                          cp .build/release/LaunchMe build/LaunchMe.app/Contents/MacOS/LaunchMe
+                                                                                                                    cp Resources/Info.plist build/LaunchMe.app/Contents/Info.plist
+
+                                                                                                                          - name: Upload LaunchMe.app
+                                                                                                                                  uses: actions/upload-artifact@v4
+                                                                                                                                          with:
+                                                                                                                                                    name: LaunchMe-macOS-Intel
+                                                                                                                                                              path: build/LaunchMe.app
