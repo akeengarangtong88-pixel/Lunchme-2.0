@@ -1,16 +1,22 @@
 name: Build LaunchMe
 
-on: [push, workflow_dispatch]
+on:
+  push:
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: macos-15-intel
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Build
         run: swift build -c release
-         - name: Upload Build Artifact
+
+      - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: my-successful-app       # The name of your download file
-          path: dist/            
+          name: LaunchMe-2.0
+          path: .build/release/
+          if-no-files-found: error
